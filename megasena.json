@@ -1,0 +1,14 @@
+{
+  "concurso": 2700,
+  "data": "14/03/2026",
+  "dezenas": ["04", "12", "23", "34", "45", "56"],
+  "acumulou": true,
+  "trevos": [],
+  "mesSorte": null,
+  "premiacoes": [
+    {
+      "vencedores": 0,
+      "premio": 0
+    }
+  ]
+}
