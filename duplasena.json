@@ -8,7 +8,8 @@
   "premiacoes": [
     {
       "vencedores": 1,
-      "premio": 2
+      "premio": 2000000.00
     }
-  ]
+  ],
+  "valorEstimadoProximoConcurso": 0.00
 }
