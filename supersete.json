@@ -7,9 +7,9 @@
   "mesSorte": null,
   "premiacoes": [
     {
-      
       "vencedores": 0,
-      "premio": 0
+      "premio": 0.00
     }
-  ]
+  ],
+  "valorEstimadoProximoConcurso": 2500000.00
 }
