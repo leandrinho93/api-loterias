@@ -1,15 +1,15 @@
 {
-  "concurso": 3654,
-  "data": "06/04/2026",
-  "dezenas": ["01", "02", "04", "05", "08", "09", "11", "13", "14", "16", "17", "20", "22", "24", "28"],
-  "acumulou": false,
+  "concurso": 3666,
+  "data": "20/04/2026",
+  "dezenas": ["01", "04", "06", "07", "09", "12", "14", "15", "16", "17", "19", "20", "21", "22", "23"],
+  "acumulou": true,
   "trevos": [],
   "mesSorte": null,
   "premiacoes": [
     {
-      "vencedores": 2,
-      "premio": 1500000.00
+      "vencedores": 1,
+      "premio": 2000000.00
     }
   ],
-  "valorEstimadoProximoConcurso": 1700000.00
+  "valorEstimadoProximoConcurso": 2000000.00
 }
