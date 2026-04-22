@@ -2,13 +2,13 @@
   "concurso": 1203,
   "data": "18/04/2026",
   "dezenas": ["05", "09", "16", "19", "22", "23", "30"],
-  "acumulou": false,
+  "acumulou": "false",
   "trevos": [],
   "mesSorte": "Dezembro",
   "premiacoes": [
     {
       "vencedores": 0,
-      "premio":20000000
+      "premio":"2.Milhões"
     }
   ]
 }
