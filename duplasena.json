@@ -2,6 +2,7 @@
   "concurso": 2650,
   "data": "13/03/2026",
   "dezenas": ["02", "14", "26", "38", "41", "49"],
+  "dezenas2": ["05", "11", "22", "33", "44", "50"],
   "acumulou": false,
   "trevos": [],
   "mesSorte": null,
