@@ -1,15 +1,15 @@
 {
-  "concurso": 348,
-  "data": "04/05/2026",
-  "dezenas": ["03", "06", "25", "28", "31", "48"],
+  "concurso": 353,
+  "data": "09/05/2026",
+  "dezenas": ["08", "19", "24", "27", "35", "36"],
   "acumulou": true,
   "trevos": ["2", "5"],
   "mesSorte": null,
   "premiacoes": [
     {
       "vencedores": 0,
-      "premio": 37000000.00
+      "premio": 40000000.00
     }
   ],
-  "valorEstimadoProximoConcurso": 37000000.00
+  "valorEstimadoProximoConcurso": 41000000.00
 }
