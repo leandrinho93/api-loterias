@@ -2,7 +2,7 @@
   "concurso": 7022,
   "data": "11/05/2026",
   "dezenas": ["30", "38", "47", "50", "68"],
-  "acumulou": ,
+  "acumulou": true,
   "trevos": [],
   "mesSorte": null,
   "premiacoes": [
