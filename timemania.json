@@ -1,16 +1,26 @@
 {
   "concurso": 2390,
-  "data": "11/05/2026",
-  "dezenas": ["21", "36", "78", "46", "58", "04", "22"],
-  "timeCoracao": "SÃO PAULO/SP",
+  "data": "12/05/2026",
+  "dezenas": [
+    "04",
+    "21",
+    "22",
+    "36",
+    "46",
+    "58",
+    "78"
+  ],
   "acumulou": true,
   "trevos": [],
   "mesSorte": null,
+  "timeCoracao": "SÃO PAULO/SP",
   "premiacoes": [
     {
       "vencedores": 0,
-      "premio": 24500000.00
+      "premio": 26000000
     }
   ],
-  "valorEstimadoProximoConcurso": 25500000.00
+  "valorEstimadoProximoConcurso": 26000000,
+  "dataProximoConcurso": "14/05/2026",
+  "motivoPausa": null
 }
