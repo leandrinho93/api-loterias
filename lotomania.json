@@ -1,38 +1,33 @@
 {
-  "concurso": 2922,
-  "data": "11/05/2026",
+  "concurso": 2923,
+  "data": "13/05/2026",
   "dezenas": [
     "02",
-    "04",
+    "05",
+    "06",
     "10",
+    "11",
+    "14",
     "18",
-    "28",
-    "32",
-    "34",
-    "36",
-    "46",
+    "31",
+    "33",
     "47",
+    "48",
     "61",
-    "65",
-    "66",
-    "69",
-    "76",
-    "86",
+    "63",
+    "68",
+    "77",
+    "79",
+    "82",
     "88",
-    "91",
     "93",
-    "99"
+    "95"
   ],
-  "acumulou": true,
+  "acumulou": null,
   "trevos": [],
   "mesSorte": null,
-  "premiacoes": [
-    {
-      "vencedores": 0,
-      "premio": 4100000
-    }
-  ],
-  "valorEstimadoProximoConcurso": 4100000,
-  "dataProximoConcurso": "13/05/2026",
+  "premiacoes": [],
+  "valorEstimadoProximoConcurso": null,
+  "dataProximoConcurso": null,
   "motivoPausa": null
 }
