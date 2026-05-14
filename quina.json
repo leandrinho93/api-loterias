@@ -1,23 +1,18 @@
 {
-  "concurso": 7023,
-  "data": "12/05/2026",
+  "concurso": 3683,
+  "data": "13/05/2026",
   "dezenas": [
-    "16",
-    "35",
-    "44",
-    "66",
-    "78"
+    "02",
+    "38",
+    "43",
+    "48",
+    "74"
   ],
-  "acumulou": false,
+  "acumulou": null,
   "trevos": [],
   "mesSorte": null,
-  "premiacoes": [
-    {
-      "vencedores": 1,
-      "premio": 17280051.91
-    }
-  ],
-  "valorEstimadoProximoConcurso": 600000,
-  "dataProximoConcurso": "13/05/2026",
+  "premiacoes": [],
+  "valorEstimadoProximoConcurso": null,
+  "dataProximoConcurso": null,
   "motivoPausa": null
 }
