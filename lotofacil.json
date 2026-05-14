@@ -18,11 +18,16 @@
     "21",
     "23"
   ],
-  "acumulou": null,
+  "acumulou": false,
   "trevos": [],
   "mesSorte": null,
-  "premiacoes": [],
-  "valorEstimadoProximoConcurso": null,
-  "dataProximoConcurso": null,
+  "premiacoes": [
+    {
+      "vencedores": 2,
+      "premio": 5000000
+    }
+  ],
+  "valorEstimadoProximoConcurso": 2000000,
+  "dataProximoConcurso": "14/05/2026",
   "motivoPausa": null
 }
