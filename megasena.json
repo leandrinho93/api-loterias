@@ -15,10 +15,10 @@
   "premiacoes": [
     {
       "vencedores": 0,
-      "premio": 10000000
+      "premio": 60000000
     }
   ],
-  "valorEstimadoProximoConcurso": 10000000,
-  "dataProximoConcurso": "15/05/2026",
+  "valorEstimadoProximoConcurso": 65000000,
+  "dataProximoConcurso": "16/05/2026",
   "motivoPausa": null
 }
