@@ -10,12 +10,17 @@
     "71",
     "79"
   ],
-  "acumulou": null,
+  "acumulou": true,
   "trevos": [],
   "mesSorte": null,
   "timeCoracao": "POUSO ALEGRE/MG",
-  "premiacoes": [],
-  "valorEstimadoProximoConcurso": null,
-  "dataProximoConcurso": null,
+  "premiacoes": [
+    {
+      "vencedores": 0,
+      "premio": 26000000
+    }
+  ],
+  "valorEstimadoProximoConcurso": 26700000,
+  "dataProximoConcurso": "16/05/2026",
   "motivoPausa": null
 }
