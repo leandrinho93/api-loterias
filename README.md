@@ -1,4 +1,3 @@
-Markdown
 # 🍀 Estratégia Loteria - API e Deep Linking
 
 Este repositório atua como a infraestrutura de backend (servidor) estático e gratuito para o aplicativo Android **Estratégia Loteria**. Utilizando o poder do **GitHub Pages**, este projeto fornece os resultados atualizados das loterias e gerencia o sistema de redirecionamento inteligente (Deep Linking) para o compartilhamento de bolões entre os usuários.
@@ -41,6 +40,8 @@ Cada arquivo segue um padrão rigoroso de formatação para que o algoritmo do a
   "dataProximoConcurso": "16/05/2026",
   "motivoPausa": null
 }
+
+
 Principais Campos:
 concurso e data: Identificam o sorteio vigente.
 
