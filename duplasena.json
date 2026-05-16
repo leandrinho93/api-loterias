@@ -1,21 +1,21 @@
 {
-  "concurso": 2956,
-  "data": "13/05/2026",
+  "concurso": 2957,
+  "data": "15/05/2026",
   "dezenas": [
-    "12",
-    "17",
-    "19",
-    "29",
-    "45",
-    "48"
+    "02",
+    "10",
+    "32",
+    "36",
+    "39",
+    "42"
   ],
   "dezenas2": [
-    "01",
-    "14",
-    "20",
-    "21",
-    "26",
-    "27"
+    "04",
+    "10",
+    "11",
+    "13",
+    "16",
+    "33"
   ],
   "acumulou": true,
   "trevos": [],
@@ -26,7 +26,7 @@
       "premio": 700000
     }
   ],
-  "valorEstimadoProximoConcurso": 700000,
-  "dataProximoConcurso": "15/05/2026",
+  "valorEstimadoProximoConcurso": 900000,
+  "dataProximoConcurso": "18/05/2026",
   "motivoPausa": null
 }
