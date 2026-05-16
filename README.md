@@ -40,7 +40,7 @@ Cada arquivo segue um padrão rigoroso de formatação para que o algoritmo do a
   "dataProximoConcurso": "16/05/2026",
   "motivoPausa": null
 }
-(```)
+```
 Principais Campos:
 concurso e data: Identificam o sorteio vigente.
 
