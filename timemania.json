@@ -10,12 +10,17 @@
     "75",
     "78"
   ],
-  "acumulou": null,
+  "acumulou": true,
   "trevos": [],
   "mesSorte": null,
   "timeCoracao": "TOMBENSE/MG",
-  "premiacoes": [],
-  "valorEstimadoProximoConcurso": null,
-  "dataProximoConcurso": null,
+  "premiacoes": [
+    {
+      "vencedores": 0,
+      "premio": 27200000
+    }
+  ],
+  "valorEstimadoProximoConcurso": 27200000,
+  "dataProximoConcurso": "19/05/2026",
   "motivoPausa": null
 }
