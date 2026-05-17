@@ -10,11 +10,16 @@
     "28",
     "30"
   ],
-  "acumulou": null,
+  "acumulou": true,
   "trevos": [],
   "mesSorte": "dEZEMBRO",
-  "premiacoes": [],
-  "valorEstimadoProximoConcurso": null,
-  "dataProximoConcurso": null,
+  "premiacoes": [
+    {
+      "vencedores": 0,
+      "premio": 1400000
+    }
+  ],
+  "valorEstimadoProximoConcurso": 1400000,
+  "dataProximoConcurso": "19/05/2026",
   "motivoPausa": null
 }
