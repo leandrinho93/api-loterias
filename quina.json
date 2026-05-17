@@ -1,12 +1,12 @@
 {
-  "concurso": 7026,
-  "data": "15/05/2026",
+  "concurso": 7027,
+  "data": "16/05/2026",
   "dezenas": [
-    "19",
-    "51",
-    "55",
-    "57",
-    "70"
+    "24",
+    "27",
+    "34",
+    "44",
+    "47"
   ],
   "acumulou": true,
   "trevos": [],
@@ -14,10 +14,10 @@
   "premiacoes": [
     {
       "vencedores": 0,
-      "premio": 8000000
+      "premio": 300000000
     }
   ],
-  "valorEstimadoProximoConcurso": 9500000,
-  "dataProximoConcurso": "16/05/2026",
+  "valorEstimadoProximoConcurso": 10500000,
+  "dataProximoConcurso": "18/05/2026",
   "motivoPausa": null
 }
