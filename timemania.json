@@ -1,26 +1,21 @@
 {
-  "concurso": 2391,
-  "data": "14/05/2026",
+  "concurso": 2392,
+  "data": "16/05/2026",
   "dezenas": [
-    "08",
-    "09",
-    "16",
+    "04",
+    "12",
     "17",
-    "21",
-    "71",
-    "79"
+    "23",
+    "59",
+    "75",
+    "78"
   ],
-  "acumulou": true,
+  "acumulou": null,
   "trevos": [],
   "mesSorte": null,
-  "timeCoracao": "POUSO ALEGRE/MG",
-  "premiacoes": [
-    {
-      "vencedores": 0,
-      "premio": 26000000
-    }
-  ],
-  "valorEstimadoProximoConcurso": 26700000,
-  "dataProximoConcurso": "16/05/2026",
+  "timeCoracao": "TOMBENSE/MG",
+  "premiacoes": [],
+  "valorEstimadoProximoConcurso": null,
+  "dataProximoConcurso": null,
   "motivoPausa": null
 }
