@@ -1,23 +1,23 @@
 {
-  "concurso": 7027,
-  "data": "16/05/2026",
-  "dezenas": [
-    "24",
-    "27",
-    "34",
-    "44",
-    "47"
-  ],
-  "acumulou": true,
-  "trevos": [],
-  "mesSorte": null,
-  "premiacoes": [
-    {
-      "vencedores": 0,
-      "premio": 300000000
-    }
-  ],
-  "valorEstimadoProximoConcurso": 10500000,
-  "dataProximoConcurso": "18/05/2026",
-  "motivoPausa": null
+    "concurso": 7028,
+    "data": "18/05/2026",
+    "dezenas": [
+        "01",
+        "16",
+        "41",
+        "42",
+        "74"
+    ],
+    "acumulou": true,
+    "trevos": [],
+    "mesSorte": null,
+    "premiacoes": [
+        {
+            "vencedores": 0,
+            "premio": 10500000
+        }
+    ],
+    "valorEstimadoProximoConcurso": 12000000,
+    "dataProximoConcurso": "19/05/2026",
+    "motivoPausa": null
 }
