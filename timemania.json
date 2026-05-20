@@ -1,26 +1,26 @@
 {
-  "concurso": 2392,
-  "data": "16/05/2026",
-  "dezenas": [
-    "04",
-    "12",
-    "17",
-    "23",
-    "59",
-    "75",
-    "78"
-  ],
-  "acumulou": true,
-  "trevos": [],
-  "mesSorte": null,
-  "timeCoracao": "TOMBENSE/MG",
-  "premiacoes": [
-    {
-      "vencedores": 0,
-      "premio": 27200000
-    }
-  ],
-  "valorEstimadoProximoConcurso": 27200000,
-  "dataProximoConcurso": "19/05/2026",
-  "motivoPausa": null
+    "concurso": 2393,
+    "data": "19/05/2026",
+    "dezenas": [
+        "14",
+        "27",
+        "34",
+        "46",
+        "50",
+        "60",
+        "73"
+    ],
+    "acumulou": true,
+    "trevos": [],
+    "mesSorte": null,
+    "timeCoracao": "CRB/AL",
+    "premiacoes": [
+        {
+            "vencedores": 0,
+            "premio": 27200000
+        }
+    ],
+    "valorEstimadoProximoConcurso": 28000000,
+    "dataProximoConcurso": "21/05/2026",
+    "motivoPausa": null
 }
