@@ -1,25 +1,25 @@
 {
-    "concurso": 848,
-    "data": "18/05/2026",
+    "concurso": 000,
+    "data": "00/00/0000",
     "dezenas": [
-        "7",
-        "2",
-        "5",
-        "3",
-        "5",
-        "6",
-        "2"
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
     ],
-    "acumulou": true,
+    "acumulou": false,
     "trevos": [],
     "mesSorte": null,
     "premiacoes": [
         {
             "vencedores": 0,
-            "premio": 500000
+            "premio": 0000000
         }
     ],
-    "valorEstimadoProximoConcurso": 550000,
-    "dataProximoConcurso": "20/05/2026",
+    "valorEstimadoProximoConcurso": 000000,
+    "dataProximoConcurso": "00/00/0000",
     "motivoPausa": null
 }
