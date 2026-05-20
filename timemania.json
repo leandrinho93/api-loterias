@@ -1,26 +1,26 @@
 {
-    "concurso": 2393,
-    "data": "19/05/2026",
+    "concurso": 0000,
+    "data": "00/00/0000",
     "dezenas": [
-        "14",
-        "27",
-        "34",
-        "46",
-        "50",
-        "60",
-        "73"
+        "00",
+        "00",
+        "00",
+        "00",
+        "00",
+        "00",
+        "00"
     ],
-    "acumulou": true,
+    "acumulou": false,
     "trevos": [],
     "mesSorte": null,
-    "timeCoracao": "CRB/AL",
+    "timeCoracao": null,
     "premiacoes": [
         {
             "vencedores": 0,
-            "premio": 27200000
+            "premio": 0000000
         }
     ],
-    "valorEstimadoProximoConcurso": 28000000,
-    "dataProximoConcurso": "21/05/2026",
+    "valorEstimadoProximoConcurso": 00000000,
+    "dataProximoConcurso": "00/00/0000",
     "motivoPausa": null
 }
