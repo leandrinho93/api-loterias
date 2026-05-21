@@ -1,18 +1,136 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Importar Bolão</title>
-    <script>
-        // Redireciona o utilizador direto para a Play Store se ele não tiver o app
-        window.onload = function() {
-            window.location.href = "https://play.google.com/store/apps/details?id=com.lmtr.SorteadorDeLoteria";
-        };
-    </script>
+    <title>Importar Bolão – Estratégia Loteria</title>
+    <style>
+        body {
+            background: #0d0d14;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .card {
+            background: #16161f;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px 24px;
+            max-width: 360px;
+            width: 100%;
+        }
+        .emoji { font-size: 3rem; margin-bottom: 12px; }
+        h2 { color: #eab308; margin: 0 0 10px; font-size: 1.3rem; }
+        p { color: #a1a1aa; font-size: 0.9rem; line-height: 1.5; margin: 0 0 20px; }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 900;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .btn-primary { background: #eab308; color: #0d0d14; }
+        .btn-secondary { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; }
+        .code-box {
+            background: rgba(192,132,252,0.1);
+            border: 1px dashed rgba(192,132,252,0.4);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.7rem;
+            color: #c084fc;
+            word-break: break-all;
+            margin-bottom: 16px;
+            display: none;
+        }
+    </style>
 </head>
-<body style="background-color: #0d0d14; color: #fff; text-align: center; padding-top: 50px; font-family: sans-serif;">
-    <h3 style="color: #4ade80;">A abrir o Estratégia Loteria...</h3>
-    <p style="color: #a1a1aa; font-size: 0.9rem;">Se não for redirecionado, instale a nossa aplicação na Play Store.</p>
+<body>
+    <div class="card">
+        <div class="emoji">🤝</div>
+        <h2>Bolão Recebido!</h2>
+        <p id="mensagem">Detectando o bolão, aguarde...</p>
+        <div class="code-box" id="codeBox"></div>
+        <a id="btnAbrir" class="btn btn-primary" href="#" style="display:none;">
+            📥 Abrir no App
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.lmtr.SorteadorDeLoteria" class="btn btn-secondary">
+            ⬇️ Baixar o App
+        </a>
+    </div>
+
+    <!-- Firebase SDK — use as mesmas versões que já usa no app -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script>
+        // Cole aqui a mesma configuração do Firebase que você já usa no app
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
+            projectId: "SEU_PROJETO",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        async function iniciar() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            const codigoDireto = params.get('codigo');
+
+            const mensagem = document.getElementById('mensagem');
+            const btnAbrir = document.getElementById('btnAbrir');
+            const codeBox = document.getElementById('codeBox');
+
+            if (id) {
+                // 🔥 Recebeu ID curto: busca o código completo no Firebase
+                try {
+                    const snapshot = await database.ref('boloes_compartilhados/' + id).once('value');
+                    const dados = snapshot.val();
+
+                    if (dados && dados.codigo) {
+                        const codigoCompleto = dados.codigo;
+                        const deepLink = `intent://importar?codigo=${encodeURIComponent(codigoCompleto)}#Intent;scheme=lmtr;package=com.lmtr.SorteadorDeLoteria;end`;
+
+                        mensagem.innerHTML = 'Toque no botão abaixo para abrir o bolão direto no app.<br><br><small style="color:#71717a;">Se não funcionar, copie o código abaixo e cole em <strong>Menu &gt; Importar Bolão por Código</strong>.</small>';
+                        btnAbrir.href = deepLink;
+                        btnAbrir.style.display = 'block';
+                        codeBox.textContent = codigoCompleto;
+                        codeBox.style.display = 'block';
+                    } else {
+                        mensagem.textContent = 'Bolão não encontrado. O link pode ter expirado ou é inválido.';
+                    }
+                } catch(e) {
+                    mensagem.textContent = 'Erro ao buscar o bolão. Verifique sua conexão e tente novamente.';
+                }
+
+            } else if (codigoDireto) {
+                // 🔄 Compatibilidade: recebeu o código antigo direto na URL
+                const deepLink = `intent://importar?codigo=${encodeURIComponent(codigoDireto)}#Intent;scheme=lmtr;package=com.lmtr.SorteadorDeLoteria;end`;
+                mensagem.innerHTML = 'Toque no botão abaixo para abrir o bolão direto no app.';
+                btnAbrir.href = deepLink;
+                btnAbrir.style.display = 'block';
+                codeBox.textContent = codigoDireto;
+                codeBox.style.display = 'block';
+
+            } else {
+                mensagem.textContent = 'Nenhum bolão detectado neste link. Verifique se copiou o link completo.';
+            }
+        }
+
+        iniciar();
+    </script>
 </body>
 </html>
