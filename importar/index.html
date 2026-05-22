@@ -71,16 +71,19 @@
         </a>
     </div>
 
-    <!-- Firebase SDK — use as mesmas versões que já usa no app -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- Firebase SDK - Versão 9.22.0 (Igualada com o app principal) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script>
-        // Cole aqui a mesma configuração do Firebase que você já usa no app
+        // Configuração real do projeto Firebase
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_PROJETO.firebaseapp.com",
-            databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
-            projectId: "SEU_PROJETO",
+            apiKey: "AIzaSyAGrLhUWntveHvJ9TFZRDkMhGi1sqYKrz0",
+            authDomain: "estacao-de-comando-loteria.firebaseapp.com",
+            databaseURL: "https://estacao-de-comando-loteria-default-rtdb.firebaseio.com",
+            projectId: "estacao-de-comando-loteria",
+            storageBucket: "estacao-de-comando-loteria.firebasestorage.app",
+            messagingSenderId: "115426303577",
+            appId: "1:115426303577:web:31cfc1f3d77fde3be71b48"
         };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
