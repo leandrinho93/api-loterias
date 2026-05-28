@@ -25,53 +25,47 @@
             padding: 30px 24px;
             max-width: 360px;
             width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: fadeIn 0.4s ease-out;
         }
-        .emoji { font-size: 3rem; margin-bottom: 12px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: #eab308;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         h2 { color: #eab308; margin: 0 0 10px; font-size: 1.3rem; }
         p { color: #a1a1aa; font-size: 0.9rem; line-height: 1.5; margin: 0 0 20px; }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 900;
-            font-size: 1rem;
-            cursor: pointer;
-            text-decoration: none;
-            box-sizing: border-box;
-            margin-bottom: 10px;
-        }
-        .btn-primary { background: #eab308; color: #0d0d14; }
-        .btn-secondary { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; }
+        
         .code-box {
             background: rgba(192,132,252,0.1);
             border: 1px dashed rgba(192,132,252,0.4);
             border-radius: 8px;
-            padding: 10px;
-            font-size: 0.7rem;
+            padding: 12px;
+            font-size: 0.75rem;
             color: #c084fc;
             word-break: break-all;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
             display: none;
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="emoji">🤝</div>
-        <h2>Bolão Recebido!</h2>
-        <p id="mensagem">Detectando o bolão, aguarde...</p>
+        <div class="spinner" id="spinner"></div>
+        <h2 id="titulo">Preparando Bolão...</h2>
+        <p id="mensagem">Buscando os dados do sorteio, aguarde um instante.</p>
+        
         <div class="code-box" id="codeBox"></div>
-        <a id="btnAbrir" class="btn btn-primary" href="#" style="display:none;">
-            📥 Abrir no App
-        </a>
-        <a href="https://play.google.com/store/apps/details?id=com.lmtr.SorteadorDeLoteria" class="btn btn-secondary">
-            ⬇️ Baixar o App
-        </a>
     </div>
 
-    <!-- Firebase SDK - Versão 9.22.0 (Igualada com o app principal) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script>
@@ -93,47 +87,66 @@
             const id = params.get('id');
             const codigoDireto = params.get('codigo');
 
-            const mensagem = document.getElementById('mensagem');
-            const btnAbrir = document.getElementById('btnAbrir');
-            const codeBox = document.getElementById('codeBox');
-
             if (id) {
-                // 🔥 Recebeu ID curto: busca o código completo no Firebase
+                // Busca o código completo no Firebase
                 try {
                     const snapshot = await database.ref('boloes_compartilhados/' + id).once('value');
                     const dados = snapshot.val();
 
                     if (dados && dados.codigo) {
-                        const codigoCompleto = dados.codigo;
-                        const deepLink = `intent://importar?codigo=${encodeURIComponent(codigoCompleto)}#Intent;scheme=lmtr;package=com.lmtr.SorteadorDeLoteria;end`;
-
-                        mensagem.innerHTML = 'Toque no botão abaixo para abrir o bolão direto no app.<br><br><small style="color:#71717a;">Se não funcionar, copie o código abaixo e cole em <strong>Menu &gt; Importar Bolão por Código</strong>.</small>';
-                        btnAbrir.href = deepLink;
-                        btnAbrir.style.display = 'block';
-                        codeBox.textContent = codigoCompleto;
-                        codeBox.style.display = 'block';
+                        redirecionarAutomaticamente(dados.codigo);
                     } else {
-                        mensagem.textContent = 'Bolão não encontrado. O link pode ter expirado ou é inválido.';
+                        mostrarErro('Bolão não encontrado ou link expirado.');
                     }
                 } catch(e) {
-                    mensagem.textContent = 'Erro ao buscar o bolão. Verifique sua conexão e tente novamente.';
+                    mostrarErro('Erro de conexão ao buscar o bolão.');
                 }
-
             } else if (codigoDireto) {
-                // 🔄 Compatibilidade: recebeu o código antigo direto na URL
-                const deepLink = `intent://importar?codigo=${encodeURIComponent(codigoDireto)}#Intent;scheme=lmtr;package=com.lmtr.SorteadorDeLoteria;end`;
-                mensagem.innerHTML = 'Toque no botão abaixo para abrir o bolão direto no app.';
-                btnAbrir.href = deepLink;
-                btnAbrir.style.display = 'block';
-                codeBox.textContent = codigoDireto;
-                codeBox.style.display = 'block';
-
+                // Compatibilidade com a URL antiga
+                redirecionarAutomaticamente(codigoDireto);
             } else {
-                mensagem.textContent = 'Nenhum bolão detectado neste link. Verifique se copiou o link completo.';
+                mostrarErro('Nenhum bolão detectado neste link.');
             }
         }
 
-        iniciar();
+        function redirecionarAutomaticamente(codigo) {
+            const titulo = document.getElementById('titulo');
+            const mensagem = document.getElementById('mensagem');
+            const codeBox = document.getElementById('codeBox');
+
+            // Atualiza a interface para indicar a ação
+            titulo.textContent = 'Redirecionando...';
+            mensagem.innerHTML = 'Abrindo o aplicativo automaticamente.<br><br><small style="color:#71717a;">Se não abrir, baixe o app e cole o código abaixo em <strong>Menu > Importar Bolão por Código</strong>.</small>';
+            
+            // Exibe o código como plano B visual
+            codeBox.textContent = codigo;
+            codeBox.style.display = 'block';
+
+            // Monta as rotas de fuga
+            const deepLink = `intent://importar?codigo=${encodeURIComponent(codigo)}#Intent;scheme=lmtr;package=com.lmtr.SorteadorDeLoteria;end`;
+            const playStoreLink = "https://play.google.com/store/apps/details?id=com.lmtr.SorteadorDeLoteria";
+
+            // 1. Tenta acionar a abertura nativa do App ou da Play Store pelo Chrome
+            window.location.href = deepLink;
+
+            // 2. Fallback: Se o usuário estiver num navegador que bloqueia "intent://" 
+            // e a tela continuar visível após 2 segundos, força a ida pra Play Store via URL padrão.
+            setTimeout(() => {
+                if (!document.hidden) {
+                    window.location.replace(playStoreLink);
+                }
+            }, 2000);
+        }
+
+        function mostrarErro(msg) {
+            document.getElementById('spinner').style.display = 'none';
+            document.getElementById('titulo').textContent = 'Ops!';
+            document.getElementById('titulo').style.color = '#ef4444';
+            document.getElementById('mensagem').textContent = msg;
+        }
+
+        // Dá um fôlego de 300ms para a animação da página rodar antes de travar a thread com o Firebase
+        setTimeout(iniciar, 300);
     </script>
 </body>
 </html>
