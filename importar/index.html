@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Importar Bolão – Estratégia Loteria</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=DM+Sans:wght@500;700&display=swap" rel="stylesheet">
     <style>
         body {
             background: #0d0d14;
             color: #fff;
-            font-family: 'DM Sans', sans-serif;
+            font-family: sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -24,7 +23,7 @@
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 16px;
             padding: 30px 24px;
-            max-width: 380px;
+            max-width: 360px;
             width: 100%;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             animation: fadeIn 0.4s ease-out;
@@ -42,8 +41,8 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        h2 { color: #eab308; margin: 0 0 10px; font-family: 'Syne', sans-serif; font-size: 1.4rem; }
-        p { color: #a1a1aa; font-size: 0.95rem; line-height: 1.5; margin: 0 0 20px; }
+        h2 { color: #eab308; margin: 0 0 10px; font-size: 1.3rem; }
+        p { color: #a1a1aa; font-size: 0.9rem; line-height: 1.5; margin: 0 0 20px; }
         
         .code-box {
             background: rgba(192,132,252,0.1);
@@ -53,41 +52,18 @@
             font-size: 0.75rem;
             color: #c084fc;
             word-break: break-all;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             display: none;
-            font-family: monospace;
-            letter-spacing: 0.5px;
         }
-
-        .btn {
-            display: inline-block;
-            background: #7c5cfc;
-            color: #fff;
-            text-decoration: none;
-            padding: 14px 24px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-family: 'Syne', sans-serif;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            transition: 0.2s;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .btn:hover { background: #6b4fe0; }
-        .icon-top { font-size: 3.5rem; margin-bottom: 10px; display: none; }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="icon-top" id="iconTop"></div>
         <div class="spinner" id="spinner"></div>
-        
         <h2 id="titulo">Preparando Bolão...</h2>
         <p id="mensagem">Buscando os dados do sorteio, aguarde um instante.</p>
         
         <div class="code-box" id="codeBox"></div>
-        <div id="extraButtons"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -106,88 +82,60 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // 🔥 INSIRA AQUI O LINK DO SEU NOVO SITE HOSPEDADO NO GITHUB PAGES 🔥
-        const LINK_PORTFOLIO = "https://leandrinho93.github.io/lmtr/";
-
-        // Verifica o dispositivo do usuário
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        const isAndroid = /android/i.test(userAgent);
-        const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-
         async function iniciar() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
             const codigoDireto = params.get('codigo');
 
             if (id) {
+                // Busca o código completo no Firebase
                 try {
                     const snapshot = await database.ref('boloes_compartilhados/' + id).once('value');
                     const dados = snapshot.val();
 
                     if (dados && dados.codigo) {
-                        analisarEEncaminhar(dados.codigo);
+                        redirecionarAutomaticamente(dados.codigo);
                     } else {
-                        mostrarErro('Bolão não encontrado ou o link expirou (validade de 5 dias).');
+                        mostrarErro('Bolão não encontrado ou link expirado.');
                     }
                 } catch(e) {
                     mostrarErro('Erro de conexão ao buscar o bolão.');
                 }
             } else if (codigoDireto) {
-                analisarEEncaminhar(codigoDireto);
+                // Compatibilidade com a URL antiga
+                redirecionarAutomaticamente(codigoDireto);
             } else {
                 mostrarErro('Nenhum bolão detectado neste link.');
             }
         }
 
-        function analisarEEncaminhar(codigo) {
-            document.getElementById('spinner').style.display = 'none';
-
+        function redirecionarAutomaticamente(codigo) {
             const titulo = document.getElementById('titulo');
             const mensagem = document.getElementById('mensagem');
             const codeBox = document.getElementById('codeBox');
-            const iconTop = document.getElementById('iconTop');
-            const extraButtons = document.getElementById('extraButtons');
 
-            // Exibe o código em todas as telas por segurança
+            // Atualiza a interface para indicar a ação
+            titulo.textContent = 'Redirecionando...';
+            mensagem.innerHTML = 'Abrindo o aplicativo automaticamente.<br><br><small style="color:#71717a;">Se não abrir, baixe o app e cole o código abaixo em <strong>Menu > Importar Bolão por Código</strong>.</small>';
+            
+            // Exibe o código como plano B visual
             codeBox.textContent = codigo;
             codeBox.style.display = 'block';
 
-            if (isAndroid) {
-                // FLUXO NORMAL (ANDROID)
-                titulo.textContent = 'Redirecionando...';
-                mensagem.innerHTML = 'Abrindo o aplicativo automaticamente.<br><br><small style="color:#71717a;">Se não abrir, baixe o app e cole o código abaixo em <strong>Menu > Importar Bolão por Código</strong>.</small>';
+            // Monta as rotas de fuga
+            const deepLink = `intent://importar?codigo=${encodeURIComponent(codigo)}#Intent;scheme=lmtr;package=com.lmtr.SorteadorDeLoteria;end`;
+            const playStoreLink = "https://play.google.com/store/apps/details?id=com.lmtr.SorteadorDeLoteria";
 
-                const deepLink = `intent://importar?codigo=${encodeURIComponent(codigo)}#Intent;scheme=lmtr;package=com.lmtr.SorteadorDeLoteria;end`;
-                const playStoreLink = "https://play.google.com/store/apps/details?id=com.lmtr.SorteadorDeLoteria";
+            // 1. Tenta acionar a abertura nativa do App ou da Play Store pelo Chrome
+            window.location.href = deepLink;
 
-                window.location.href = deepLink;
-
-                setTimeout(() => {
-                    if (!document.hidden) {
-                        window.location.replace(playStoreLink);
-                    }
-                }, 2000);
-
-            } else if (isIOS) {
-                // FLUXO IPHONE / IPAD
-                iconTop.textContent = '🍎';
-                iconTop.style.display = 'block';
-                titulo.textContent = 'Apenas para Android';
-                titulo.style.color = '#ef4444';
-                mensagem.innerHTML = 'O <strong>Estratégia Loteria</strong> está disponível exclusivamente para celulares Android.<br><br>Se você usa um Android secundário, copie o código abaixo e envie para lá:';
-                
-                extraButtons.innerHTML = `<a href="${LINK_PORTFOLIO}" class="btn" target="_blank">Conhecer a LMTR</a>`;
-
-            } else {
-                // FLUXO PC (DESKTOP)
-                iconTop.textContent = '💻';
-                iconTop.style.display = 'block';
-                titulo.textContent = 'Acesse pelo Celular';
-                titulo.style.color = '#60a5fa';
-                mensagem.innerHTML = 'Você está no computador. Para importar este bolão, abra o aplicativo no seu <strong>celular Android</strong> e cole o código abaixo:';
-                
-                extraButtons.innerHTML = `<a href="${LINK_PORTFOLIO}" class="btn" target="_blank">Conhecer a LMTR</a>`;
-            }
+            // 2. Fallback: Se o usuário estiver num navegador que bloqueia "intent://" 
+            // e a tela continuar visível após 2 segundos, força a ida pra Play Store via URL padrão.
+            setTimeout(() => {
+                if (!document.hidden) {
+                    window.location.replace(playStoreLink);
+                }
+            }, 2000);
         }
 
         function mostrarErro(msg) {
@@ -197,6 +145,7 @@
             document.getElementById('mensagem').textContent = msg;
         }
 
+        // Dá um fôlego de 300ms para a animação da página rodar antes de travar a thread com o Firebase
         setTimeout(iniciar, 300);
     </script>
 </body>
