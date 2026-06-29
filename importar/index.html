@@ -160,23 +160,30 @@
                 const deepLink = `intent://importar?codigo=${encodeURIComponent(codigo)}#Intent;scheme=lmtr;package=com.lmtr.SorteadorDeLoteria;end`;
                 const playStoreLink = "https://play.google.com/store/apps/details?id=com.lmtr.SorteadorDeLoteria";
 
+                // Tenta abrir o app via deep link
                 window.location.href = deepLink;
 
+                // Botão visível caso o navegador bloqueie o redirecionamento automático da Play Store
+                extraButtons.innerHTML = `<a href="${playStoreLink}" class="btn" style="margin-top: 15px; background: #eab308; color: #0d0d14;">Baixar na Play Store</a>`;
+
+                // Mantém a tentativa de redirecionar automaticamente para a Play Store se o app não abrir
                 setTimeout(() => {
                     if (!document.hidden) {
-                        window.location.replace(playStoreLink);
+                        window.location.href = playStoreLink;
                     }
-                }, 2000);
+                }, 2500);
 
             } else if (isIOS) {
                 // FLUXO IPHONE / IPAD
+                window.location.href = LINK_PORTFOLIO;
+                
                 iconTop.textContent = '📱';
                 iconTop.style.display = 'block';
-                titulo.textContent = 'Apenas para Android';
-                titulo.style.color = '#ef4444';
-                mensagem.innerHTML = 'O <strong>Estratégia Loteria</strong> está disponível exclusivamente para celulares Android.<br><br>Se você usa um Android secundário, copie o código abaixo e envie para lá:';
+                titulo.textContent = 'Redirecionando...';
+                titulo.style.color = '#c084fc';
+                mensagem.innerHTML = 'Levando você para a nossa página oficial...';
                 
-                extraButtons.innerHTML = `<a href="${LINK_PORTFOLIO}" class="btn" target="_blank">Conhecer a LMTR</a>`;
+                extraButtons.innerHTML = `<a href="${LINK_PORTFOLIO}" class="btn">Acessar Site</a>`;
 
             } else {
                 // FLUXO PC (DESKTOP)
