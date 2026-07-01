@@ -52,7 +52,7 @@
             padding: 15px;
             border-radius: 12px;
             margin-bottom: 20px;
-            text-align: left;
+            text-align: center;
             font-size: 0.85rem;
         }
         .jogo-badge {
@@ -153,7 +153,7 @@
                         btn.style.borderColor = '#facc15';
                     }, 2500);
                 }
-            }).catch(e => {
+           }).catch(e => {
                 // Fallback para celulares mais antigos
                 let temp = document.createElement('textarea');
                 temp.value = texto;
@@ -162,6 +162,25 @@
                 document.execCommand('copy');
                 document.body.removeChild(temp);
                 alert('Chave PIX copiada com sucesso!');
+            });
+        };
+
+        // Função do botão de Copiar o Código LMTR-
+        window.copiarCodigo = function() {
+            navigator.clipboard.writeText(window.codigoLMTR).then(() => {
+                let btn = document.getElementById('btnCopiarCodigo');
+                if(btn) {
+                    btn.textContent = 'Código Copiado! ✓';
+                    setTimeout(() => { btn.textContent = '🔑 Copiar Código LMTR-'; }, 2500);
+                }
+            }).catch(() => {
+                let temp = document.createElement('textarea');
+                temp.value = window.codigoLMTR;
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand('copy');
+                document.body.removeChild(temp);
+                alert('Código copiado com sucesso!');
             });
         };
 
@@ -236,6 +255,7 @@
 
             // Decodifica e monta o painel visual
             const dados = decodificarBolao(codigo);
+			window.codigoLMTR = codigo;
 			if (dados.sucesso) window.jogosParaCopiar = dados.jogos;
             if (dados.sucesso) {
                 let nomesHtml = dados.nomes.length > 0 && dados.nomes[0] !== ""
@@ -273,6 +293,13 @@
                             <span style="color:#a1a1aa;">Participantes:</span><br>
                             <div style="margin-top:6px;">${nomesHtml}</div>
                         </div>
+                    </div>
+
+                    <div style="margin: 15px 0;">
+                        <button id="btnCopiarCodigo" onclick="copiarCodigo()" style="background: rgba(124, 92, 252, 0.2); border: 1px solid #7c5cfc; color: #a78bfa; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem; width: 100%;">🔑 Copiar Código LMTR-</button>
+                        <p style="font-size: 0.7rem; color: #a1a1aa; margin-top: 8px; line-height: 1.4;">
+                            Guarde esse código! Você pode colá-lo no site da LMTR para consultar este bolão novamente caso perca o acesso a este link. Se não tiver salvo, peça o código ao organizador do bolão.
+                        </p>
                     </div>
 
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 6px;">
@@ -314,7 +341,7 @@
                 iconTop.style.display = 'block';
                 titulo.textContent = 'Visualização Web (iOS)';
                 titulo.style.color = '#c084fc';
-                mensagem.innerHTML = Confira os dados do seu bolão abaixo.';
+                mensagem.innerHTML = 'Confira os dados do seu bolão abaixo.';
                 
                 extraButtons.innerHTML = `<a href="${LINK_PORTFOLIO}" class="btn" style="margin-top: 10px;">Conhecer a LMTR</a>`;
 
