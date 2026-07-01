@@ -59,6 +59,26 @@
             letter-spacing: 0.5px;
         }
 
+        /* Estilização do painel de resultados do decodificador */
+        #detalhesBolao {
+            display: none;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+        .jogo-badge {
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed rgba(255,255,255,0.1);
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
         .btn {
             display: inline-block;
             background: #7c5cfc;
@@ -87,13 +107,13 @@
         <p id="mensagem">Buscando os dados do sorteio, aguarde um instante.</p>
         
         <div class="code-box" id="codeBox"></div>
+        <div id="detalhesBolao"></div> <!-- Novo painel de dados -->
         <div id="extraButtons"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script>
-        // Configuração real do projeto Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAGrLhUWntveHvJ9TFZRDkMhGi1sqYKrz0",
             authDomain: "estacao-de-comando-loteria.firebaseapp.com",
@@ -106,13 +126,43 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // 🔥 INSIRA AQUI O LINK DO SEU NOVO SITE HOSPEDADO NO GITHUB PAGES 🔥
         const LINK_PORTFOLIO = "https://leandrinho93.github.io/lmtr/";
 
-        // Verifica o dispositivo do usuário
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
         const isAndroid = /android/i.test(userAgent);
         const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+        // --- DECODIFICADOR INTEGRADO ---
+        function decodificarBolao(codigoStr) {
+            let cleanCode = codigoStr.trim();
+            if (!cleanCode.startsWith('LMTR-')) return { erro: true };
+            
+            let base64Part = cleanCode.replace('LMTR-', '');
+            try {
+                let decodeUnicode = (str) => decodeURIComponent(Array.prototype.map.call(atob(str), c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+                let decodedRaw = decodeUnicode(base64Part);
+
+                let payload = {};
+                if (decodedRaw.includes('{"l":')) {
+                    let json = JSON.parse(decodedRaw);
+                    payload = { loteria: json.l, concurso: json.c, responsavel: 'Desconhecido', cotas: 1, pix: 'Não embutido', nomes: [], jogos: json.j };
+                } else {
+                    let parts = decodedRaw.split(':');
+                    if (parts.length >= 7) {
+                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: parts[2], cotas: parseInt(parts[3]) || 1, pix: parts[4], nomes: parts[5].split(','), jogos: parts[6].split('~') };
+                    } else if (parts.length >= 5) {
+                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: parts[2], cotas: parseInt(parts[3]) || 1, pix: 'Não embutido', nomes: [], jogos: parts[4].split('~') };
+                    } else if (parts.length === 4) {
+                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: parts[2], cotas: 1, pix: 'Não embutido', nomes: [], jogos: parts[3].split('~') };
+                    } else {
+                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: 'Desconhecido', cotas: 1, pix: 'Não embutido', nomes: [], jogos: parts[2].split('~') };
+                    }
+                }
+                return { sucesso: true, ...payload };
+            } catch (e) {
+                return { erro: true };
+            }
+        }
 
         async function iniciar() {
             const params = new URLSearchParams(window.location.search);
@@ -145,28 +195,53 @@
             const titulo = document.getElementById('titulo');
             const mensagem = document.getElementById('mensagem');
             const codeBox = document.getElementById('codeBox');
+            const detalhesBolao = document.getElementById('detalhesBolao');
             const iconTop = document.getElementById('iconTop');
             const extraButtons = document.getElementById('extraButtons');
 
-            // Exibe o código em todas as telas por segurança
+            // Exibe o código puro
             codeBox.textContent = codigo;
             codeBox.style.display = 'block';
+
+            // Decodifica e monta o painel visual
+            const dados = decodificarBolao(codigo);
+            if (dados.sucesso) {
+                let nomesHtml = dados.nomes.length > 0 && dados.nomes[0] !== ""
+                    ? dados.nomes.map(n => `<span style="background:#333; padding:2px 8px; border-radius:10px; margin-right:4px; margin-bottom:4px; font-size:0.75rem; display:inline-block;">${n}</span>`).join('') 
+                    : '<span style="color:#888;">Não informados</span>';
+
+                let jogosHtml = dados.jogos.map((j, i) => `<span class="jogo-badge"><strong>J${i+1}:</strong> ${j}</span>`).join('');
+
+                detalhesBolao.innerHTML = `
+                    <div style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                        <strong style="color: #4ade80;">✅ Dados do Bolão</strong><br><br>
+                        <span style="color:#a1a1aa;">Modalidade:</span> <strong style="color:#fff; text-transform: capitalize;">${dados.loteria}</strong><br>
+                        <span style="color:#a1a1aa;">Concurso:</span> <strong style="color:#fff;">${dados.concurso}</strong><br>
+                        <span style="color:#a1a1aa;">Organizador:</span> <strong style="color:#60a5fa;">${dados.responsavel}</strong><br>
+                        <span style="color:#a1a1aa;">Total de Cotas:</span> <strong style="color:#fff;">${dados.cotas}</strong><br>
+                        <span style="color:#a1a1aa;">Chave PIX:</span> <strong style="color:#facc15;">${dados.pix}</strong><br>
+                        <div style="margin-top: 8px;"><span style="color:#a1a1aa;">Participantes:</span><br><div style="margin-top:4px;">${nomesHtml}</div></div>
+                    </div>
+                    <div style="color: #EAB308; margin-bottom: 6px; font-weight: bold; text-align: center;">Jogos Gerados:</div>
+                    <div style="max-height: 150px; overflow-y: auto; padding-right: 5px;">
+                        ${jogosHtml}
+                    </div>
+                `;
+                detalhesBolao.style.display = 'block';
+            }
 
             if (isAndroid) {
                 // FLUXO NORMAL (ANDROID)
                 titulo.textContent = 'Redirecionando...';
-                mensagem.innerHTML = 'Abrindo o aplicativo automaticamente.<br><br><small style="color:#71717a;">Se não abrir, baixe o app e cole o código abaixo em <strong>Menu > Importar Bolão por Código</strong>.</small>';
+                mensagem.innerHTML = 'Abrindo o aplicativo automaticamente.<br><br><small style="color:#71717a;">Se o app não abrir, você pode copiar o código acima e importar manualmente na tela inicial.</small>';
 
                 const deepLink = `intent://importar?codigo=${encodeURIComponent(codigo)}#Intent;scheme=lmtr;package=com.lmtr.SorteadorDeLoteria;end`;
                 const playStoreLink = "https://play.google.com/store/apps/details?id=com.lmtr.SorteadorDeLoteria";
 
-                // Tenta abrir o app via deep link
                 window.location.href = deepLink;
 
-                // Botão visível caso o navegador bloqueie o redirecionamento automático da Play Store
                 extraButtons.innerHTML = `<a href="${playStoreLink}" class="btn" style="margin-top: 15px; background: #eab308; color: #0d0d14;">Baixar na Play Store</a>`;
 
-                // Mantém a tentativa de redirecionar automaticamente para a Play Store se o app não abrir
                 setTimeout(() => {
                     if (!document.hidden) {
                         window.location.href = playStoreLink;
@@ -175,25 +250,23 @@
 
             } else if (isIOS) {
                 // FLUXO IPHONE / IPAD
-                window.location.href = LINK_PORTFOLIO;
-                
                 iconTop.textContent = '📱';
                 iconTop.style.display = 'block';
-                titulo.textContent = 'Redirecionando...';
+                titulo.textContent = 'Visualização Web';
                 titulo.style.color = '#c084fc';
-                mensagem.innerHTML = 'Levando você para a nossa página oficial...';
+                mensagem.innerHTML = 'Você está no iOS. Como nosso app é para Android, você pode conferir os jogos e os dados do bolão diretamente nesta tela!';
                 
-                extraButtons.innerHTML = `<a href="${LINK_PORTFOLIO}" class="btn">Acessar Site</a>`;
+                extraButtons.innerHTML = `<a href="${LINK_PORTFOLIO}" class="btn" style="margin-top: 10px;">Conhecer a LMTR</a>`;
 
             } else {
                 // FLUXO PC (DESKTOP)
                 iconTop.textContent = '💻';
                 iconTop.style.display = 'block';
-                titulo.textContent = 'Acesse pelo Celular';
+                titulo.textContent = 'Visualização Web';
                 titulo.style.color = '#60a5fa';
-                mensagem.innerHTML = 'Você está no computador. Para importar este bolão, abra o aplicativo no seu <strong>celular Android</strong> e cole o código abaixo:';
+                mensagem.innerHTML = 'Você está no computador. Confira os dados do seu bolão na tela ou importe o código acima no seu <strong>celular Android</strong>.';
                 
-                extraButtons.innerHTML = `<a href="${LINK_PORTFOLIO}" class="btn" target="_blank">Conhecer a LMTR</a>`;
+                extraButtons.innerHTML = `<a href="${LINK_PORTFOLIO}" class="btn" target="_blank" style="margin-top: 10px;">Conhecer a LMTR</a>`;
             }
         }
 
