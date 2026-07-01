@@ -45,21 +45,6 @@
         h2 { color: #eab308; margin: 0 0 10px; font-family: 'Syne', sans-serif; font-size: 1.4rem; }
         p { color: #a1a1aa; font-size: 0.95rem; line-height: 1.5; margin: 0 0 20px; }
         
-        .code-box {
-            background: rgba(192,132,252,0.1);
-            border: 1px dashed rgba(192,132,252,0.4);
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 0.75rem;
-            color: #c084fc;
-            word-break: break-all;
-            margin-bottom: 20px;
-            display: none;
-            font-family: monospace;
-            letter-spacing: 0.5px;
-        }
-
-        /* Estilização do painel de resultados do decodificador */
         #detalhesBolao {
             display: none;
             background: rgba(0,0,0,0.3);
@@ -106,8 +91,7 @@
         <h2 id="titulo">Preparando Bolão...</h2>
         <p id="mensagem">Buscando os dados do sorteio, aguarde um instante.</p>
         
-        <div class="code-box" id="codeBox"></div>
-        <div id="detalhesBolao"></div> <!-- Novo painel de dados -->
+        <div id="detalhesBolao"></div>
         <div id="extraButtons"></div>
     </div>
 
@@ -132,6 +116,34 @@
         const isAndroid = /android/i.test(userAgent);
         const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
+        // Função do botão de Copiar o PIX
+        window.copiarPix = function(texto) {
+            navigator.clipboard.writeText(texto).then(() => {
+                let btn = document.getElementById('btnCopiarPix');
+                if(btn) {
+                    btn.textContent = 'Copiado! ✓';
+                    btn.style.background = '#4ade80';
+                    btn.style.color = '#0d0d14';
+                    btn.style.borderColor = '#4ade80';
+                    setTimeout(() => {
+                        btn.textContent = 'Copiar';
+                        btn.style.background = 'rgba(250, 204, 21, 0.2)';
+                        btn.style.color = '#facc15';
+                        btn.style.borderColor = '#facc15';
+                    }, 2500);
+                }
+            }).catch(e => {
+                // Fallback para celulares mais antigos
+                let temp = document.createElement('textarea');
+                temp.value = texto;
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand('copy');
+                document.body.removeChild(temp);
+                alert('Chave PIX copiada com sucesso!');
+            });
+        };
+
         // --- DECODIFICADOR INTEGRADO ---
         function decodificarBolao(codigoStr) {
             let cleanCode = codigoStr.trim();
@@ -145,17 +157,20 @@
                 let payload = {};
                 if (decodedRaw.includes('{"l":')) {
                     let json = JSON.parse(decodedRaw);
-                    payload = { loteria: json.l, concurso: json.c, responsavel: 'Desconhecido', cotas: 1, pix: 'Não embutido', nomes: [], jogos: json.j };
+                    payload = { loteria: json.l, concurso: json.c, responsavel: 'Desconhecido', cotas: 1, pix: 'Não embutido', nomes: [], valorCota: 'A apurar', jogos: json.j };
                 } else {
                     let parts = decodedRaw.split(':');
-                    if (parts.length >= 7) {
-                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: parts[2], cotas: parseInt(parts[3]) || 1, pix: parts[4], nomes: parts[5].split(','), jogos: parts[6].split('~') };
+                    if (parts.length >= 8) {
+                        // FORMATO NOVO COM VALOR DA COTA
+                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: parts[2], cotas: parseInt(parts[3]) || 1, pix: parts[4], nomes: parts[5].split(','), valorCota: parts[6], jogos: parts[7].split('~') };
+                    } else if (parts.length >= 7) {
+                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: parts[2], cotas: parseInt(parts[3]) || 1, pix: parts[4], nomes: parts[5].split(','), valorCota: 'A apurar', jogos: parts[6].split('~') };
                     } else if (parts.length >= 5) {
-                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: parts[2], cotas: parseInt(parts[3]) || 1, pix: 'Não embutido', nomes: [], jogos: parts[4].split('~') };
+                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: parts[2], cotas: parseInt(parts[3]) || 1, pix: 'Não embutido', nomes: [], valorCota: 'A apurar', jogos: parts[4].split('~') };
                     } else if (parts.length === 4) {
-                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: parts[2], cotas: 1, pix: 'Não embutido', nomes: [], jogos: parts[3].split('~') };
+                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: parts[2], cotas: 1, pix: 'Não embutido', nomes: [], valorCota: 'A apurar', jogos: parts[3].split('~') };
                     } else {
-                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: 'Desconhecido', cotas: 1, pix: 'Não embutido', nomes: [], jogos: parts[2].split('~') };
+                        payload = { loteria: parts[0], concurso: parts[1] || 'Atual', responsavel: 'Desconhecido', cotas: 1, pix: 'Não embutido', nomes: [], valorCota: 'A apurar', jogos: parts[2].split('~') };
                     }
                 }
                 return { sucesso: true, ...payload };
@@ -194,14 +209,9 @@
 
             const titulo = document.getElementById('titulo');
             const mensagem = document.getElementById('mensagem');
-            const codeBox = document.getElementById('codeBox');
             const detalhesBolao = document.getElementById('detalhesBolao');
             const iconTop = document.getElementById('iconTop');
             const extraButtons = document.getElementById('extraButtons');
-
-            // Exibe o código puro
-            codeBox.textContent = codigo;
-            codeBox.style.display = 'block';
 
             // Decodifica e monta o painel visual
             const dados = decodificarBolao(codigo);
@@ -213,18 +223,43 @@
                 let jogosHtml = dados.jogos.map((j, i) => `<span class="jogo-badge"><strong>J${i+1}:</strong> ${j}</span>`).join('');
 
                 detalhesBolao.innerHTML = `
-                    <div style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
-                        <strong style="color: #4ade80;">✅ Dados do Bolão</strong><br><br>
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; padding: 12px; margin-bottom: 15px; text-align: left;">
+                        <strong style="color: #ef4444; font-size: 0.85rem;">⚠️ AVISO IMPORTANTE</strong>
+                        <p style="color: #d4d4d8; font-size: 0.75rem; margin-top: 4px; margin-bottom: 0;">
+                            Entre em contato com o realizador do bolão, confirme que a chave PIX é realmente a dele, confirme o nome e os dados. <strong>Não faça esse jogo com desconhecidos, apenas com pessoas de confiança.</strong>
+                        </p>
+                    </div>
+
+                    <div style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
+                        <strong style="color: #4ade80; font-size: 1rem;">✅ Dados do Bolão</strong><br><br>
+                        
                         <span style="color:#a1a1aa;">Modalidade:</span> <strong style="color:#fff; text-transform: capitalize;">${dados.loteria}</strong><br>
                         <span style="color:#a1a1aa;">Concurso:</span> <strong style="color:#fff;">${dados.concurso}</strong><br>
                         <span style="color:#a1a1aa;">Organizador:</span> <strong style="color:#60a5fa;">${dados.responsavel}</strong><br>
                         <span style="color:#a1a1aa;">Total de Cotas:</span> <strong style="color:#fff;">${dados.cotas}</strong><br>
-                        <span style="color:#a1a1aa;">Chave PIX:</span> <strong style="color:#facc15;">${dados.pix}</strong><br>
-                        <div style="margin-top: 8px;"><span style="color:#a1a1aa;">Participantes:</span><br><div style="margin-top:4px;">${nomesHtml}</div></div>
+                        <span style="color:#a1a1aa;">Valor por Cota:</span> <strong style="color:#4ade80;">R$ ${dados.valorCota}</strong><br>
+                        
+                        <div style="margin-top: 15px;">
+                            <span style="color:#a1a1aa;">Chave PIX para pagamento:</span>
+                            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 6px; margin-top: 6px; border: 1px solid rgba(255,255,255,0.1);">
+                                <strong style="color: #facc15; font-size: 0.9rem; word-break: break-all;">${dados.pix}</strong>
+                                <button id="btnCopiarPix" onclick="copiarPix('${dados.pix}')" style="background: rgba(250, 204, 21, 0.2); border: 1px solid #facc15; color: #facc15; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem; transition: 0.2s; flex-shrink: 0; margin-left: 10px;">Copiar</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 15px;">
+                            <span style="color:#a1a1aa;">Participantes:</span><br>
+                            <div style="margin-top:6px;">${nomesHtml}</div>
+                        </div>
                     </div>
+
                     <div style="color: #EAB308; margin-bottom: 6px; font-weight: bold; text-align: center;">Jogos Gerados:</div>
                     <div style="max-height: 150px; overflow-y: auto; padding-right: 5px;">
                         ${jogosHtml}
+                    </div>
+
+                    <div style="font-size: 0.65rem; color: var(--text-dim); text-align: justify; line-height: 1.5; margin-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;">
+                        <strong>O Estratégia Loteria é exclusivamente um software de gestão e análise estatística.</strong> Não vendemos bilhetes, não realizamos apostas, não processamos pagamentos e não temos nenhum vínculo com a Caixa Econômica Federal. O rateio e o pagamento deste bolão são de inteira responsabilidade dos participantes e do organizador.
                     </div>
                 `;
                 detalhesBolao.style.display = 'block';
@@ -233,7 +268,7 @@
             if (isAndroid) {
                 // FLUXO NORMAL (ANDROID)
                 titulo.textContent = 'Redirecionando...';
-                mensagem.innerHTML = 'Abrindo o aplicativo automaticamente.<br><br><small style="color:#71717a;">Se o app não abrir, você pode copiar o código acima e importar manualmente na tela inicial.</small>';
+                mensagem.innerHTML = 'Abrindo o aplicativo automaticamente.<br><br><small style="color:#71717a;">Você também pode conferir os dados abaixo antes de abrir o app.</small>';
 
                 const deepLink = `intent://importar?codigo=${encodeURIComponent(codigo)}#Intent;scheme=lmtr;package=com.lmtr.SorteadorDeLoteria;end`;
                 const playStoreLink = "https://play.google.com/store/apps/details?id=com.lmtr.SorteadorDeLoteria";
@@ -254,7 +289,7 @@
                 iconTop.style.display = 'block';
                 titulo.textContent = 'Visualização Web';
                 titulo.style.color = '#c084fc';
-                mensagem.innerHTML = 'Você está no iOS. Como nosso app é para Android, você pode conferir os jogos e os dados do bolão diretamente nesta tela!';
+                mensagem.innerHTML = 'Você está no iOS. Confira os jogos e os dados do bolão diretamente nesta tela!';
                 
                 extraButtons.innerHTML = `<a href="${LINK_PORTFOLIO}" class="btn" style="margin-top: 10px;">Conhecer a LMTR</a>`;
 
@@ -264,7 +299,7 @@
                 iconTop.style.display = 'block';
                 titulo.textContent = 'Visualização Web';
                 titulo.style.color = '#60a5fa';
-                mensagem.innerHTML = 'Você está no computador. Confira os dados do seu bolão na tela ou importe o código acima no seu <strong>celular Android</strong>.';
+                mensagem.innerHTML = 'Você está no computador. Confira os dados do seu bolão abaixo.';
                 
                 extraButtons.innerHTML = `<a href="${LINK_PORTFOLIO}" class="btn" target="_blank" style="margin-top: 10px;">Conhecer a LMTR</a>`;
             }
