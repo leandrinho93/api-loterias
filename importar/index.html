@@ -116,7 +116,28 @@
         const isAndroid = /android/i.test(userAgent);
         const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-        // Função do botão de Copiar o PIX
+        window.jogosParaCopiar = []; // Guarda os jogos decodificados para o botão usar
+
+        window.copiarJogos = function() {
+            const texto = window.jogosParaCopiar.join('\n');
+            navigator.clipboard.writeText(texto).then(() => {
+                let btn = document.getElementById('btnCopiarJogos');
+                if(btn) {
+                    btn.textContent = 'Copiado! ✓';
+                    setTimeout(() => { btn.textContent = '📋 Copiar Jogos'; }, 2500);
+                }
+            }).catch(() => {
+                let temp = document.createElement('textarea');
+                temp.value = texto;
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand('copy');
+                document.body.removeChild(temp);
+                alert('Jogos copiados com sucesso!');
+            });
+        };
+		
+		// Função do botão de Copiar o PIX
         window.copiarPix = function(texto) {
             navigator.clipboard.writeText(texto).then(() => {
                 let btn = document.getElementById('btnCopiarPix');
@@ -215,6 +236,7 @@
 
             // Decodifica e monta o painel visual
             const dados = decodificarBolao(codigo);
+			if (dados.sucesso) window.jogosParaCopiar = dados.jogos;
             if (dados.sucesso) {
                 let nomesHtml = dados.nomes.length > 0 && dados.nomes[0] !== ""
                     ? dados.nomes.map(n => `<span style="background:#333; padding:2px 8px; border-radius:10px; margin-right:4px; margin-bottom:4px; font-size:0.75rem; display:inline-block;">${n}</span>`).join('') 
@@ -253,7 +275,10 @@
                         </div>
                     </div>
 
-                    <div style="color: #EAB308; margin-bottom: 6px; font-weight: bold; text-align: center;">Jogos Gerados:</div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 6px;">
+                        <span style="color: #EAB308; font-weight: bold;">Jogos Gerados:</span>
+                        <button id="btnCopiarJogos" onclick="copiarJogos()" style="background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #eab308; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.7rem;">📋 Copiar Jogos</button>
+                    </div>
                     <div style="max-height: 150px; overflow-y: auto; padding-right: 5px;">
                         ${jogosHtml}
                     </div>
